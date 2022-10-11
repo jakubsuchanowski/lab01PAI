@@ -68,7 +68,7 @@ public class CalcServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         out.println("<html><head><title></title></head><body><h2>" + informacja +
-                        "</h2><h3>Strona została wyświetlona przez tę przeglądarkę " + ile + " razy.</h3></body></html>");
+                        "</h2></body></html>");
 
 
         String operation;
