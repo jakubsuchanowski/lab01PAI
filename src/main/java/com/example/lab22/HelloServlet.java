@@ -1,5 +1,6 @@
 package com.example.lab22;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +24,8 @@ public class HelloServlet extends HttpServlet {
         dateFormat = new SimpleDateFormat("yyy-MM-dd");
 
     }
-
-
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void processRequest(HttpServletRequest request, HttpServletResponse response) throws  IOException {
         response.setContentType("text/html;charset=UTF-8");
-
         // Hello
         PrintWriter out = response.getWriter();
         out.println("<html><body>");
@@ -47,6 +45,11 @@ public class HelloServlet extends HttpServlet {
         out.println("<p>Data z processRequest: "+new Date()+"</p>");
         out.println("<br><a href = 'index.jsp'>Strona główna</a>");
         out.println("</body></html>");
+    }
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        processRequest(request,response);
+
     }
 
     public void destroy() {
