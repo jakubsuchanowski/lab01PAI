@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kalkulator</title>
+</head>
+<body>
+<h1>Kalkulator</h1>
+<h2>Podaj dane do operacji</h2>
+<form method="POST" action="CalcServlet">
+    <label for="parametr1"></label><input type="text" id="parametr1" name="parametr1"><br>
+    <label for="operation"></label><select id="operation" name="operation">
+    <option value="+">+</option>
+    <option value="-">-</option>
+    <option value="*">*</option>
+    <option value="/">/</option>
+</select><br>
+    <label for="parametr2"></label><input type="text" id="parametr2" name="parametr2"><br>
+    <input type="submit" value="Wynik">
+</form><br>
+<a href="index.jsp">Strona główna</a>
+</body>
+</html>
