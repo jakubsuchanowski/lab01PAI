@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
+import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -17,29 +18,21 @@ public class CalcServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws  IOException {
-
-        /*
-        String ileWizyt = "1";
-        Cookie [] cookies = request.getCookies();
-        if(cookies !=null ){
-            for(int i=0;i<cookies.length;i++){
-                Cookie cookie = cookies[i];
-                if(ileWizyt.equals(cookie.getName())) ileWizyt = cookie.getValue();
-            }
-        }
-        int ile =1;
-        try{
-            ile = Integer.parseInt(ileWizyt);
-        }
-        catch(NumberFormatException nfe){}
-*/
+        ArrayList<String> historia = (ArrayList<String>) request.getSession().getAttribute("array_id");
+        request.getSession().setAttribute("array_id", historia);
+        request.getSession().invalidate();
+        String h = historia.get(historia.size()-1);
+        wyswietl(h, response,request);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws  IOException {
 
-        List<String> history = new ArrayList<>();
-        HttpSession session = request.getSession(true);
+        HttpSession sesja = request.getSession(true);
+
+
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
 
         String ileWizyt = "1";
         Cookie [] cookies = request.getCookies();
@@ -61,12 +54,6 @@ public class CalcServlet extends HttpServlet {
 
         Cookie c = new Cookie("ileWizyt",String.valueOf(ile+1));
         response.addCookie(c);
-
-
-
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter out = response.getWriter();
-
         out.println("<html><head><title></title></head><body><h2>" + informacja +
                         "</h2></body></html>");
 
@@ -75,6 +62,7 @@ public class CalcServlet extends HttpServlet {
         Double parametr1=null;
         Double parametr2=null;
         String odpowiedz="";
+
         try {
             parametr1 = Double.valueOf(request.getParameter("parametr1"));
         } catch (NumberFormatException | NullPointerException e) {
@@ -94,15 +82,58 @@ public class CalcServlet extends HttpServlet {
             if (parametr2 == 0 && Objects.equals(operation, "/")) {
                 odpowiedz = String.valueOf(parametr1) + " " + operation + " " + String.valueOf(parametr2) + "= Nie dziel przez zero!";
                 wyswietl(odpowiedz, response, request);
+                ArrayList<String> historia = (ArrayList) sesja.getAttribute("array_id");
+                if(historia == null){
+                    historia = new ArrayList<String>();
+
+                }
+                historia.add(odpowiedz+"<br>");
+                sesja.setAttribute("array_id", historia);
+                out.println("<html><head><title></title></head><body><h2>Historia obliczeń: <br> ");
+                for(int i=0;i<historia.size();i++){
+                    out.println(historia.get(i));
+                }
+                out.println("</h2><a href='?'>Czyść historie<a>");
+                out.println("</body></html>");
+
+
             } else {
                 odpowiedz = String.valueOf(parametr1)+" "+operation+" "+String.valueOf(parametr2)+" = " + String.valueOf(oblicz(operation, parametr1, parametr2));
                 wyswietl(odpowiedz, response, request);
+                ArrayList<String> historia = (ArrayList) sesja.getAttribute("array_id");
+                if(historia == null){
+                    historia = new ArrayList<String>();
+
+                }
+                historia.add(odpowiedz+"<br>");
+                sesja.setAttribute("array_id", historia);
+                out.println("<html><head><title></title></head><body><h2>Historia obliczeń: <br>");
+                for(int i=0;i<historia.size();i++){
+                    out.println(historia.get(i));
+                }
+                out.println("</h2><a href='?'>Czyść historie<a>");
+                out.println("</body></html>");
+
             }
         }
         else {
             wyswietl(odpowiedz,response,request);
+            ArrayList<String> historia = (ArrayList) sesja.getAttribute("array_id");
+            if(historia == null){
+                historia = new ArrayList<String>();
+
+            }
+            historia.add(odpowiedz+"<br>");
+            sesja.setAttribute("array_id", historia);
+            out.println("<html><head><title></title></head><body><h2>Historia obliczeń: <br>");
+            for(int i=0;i<historia.size();i++){
+                out.println(historia.get(i));
+            }
+            out.println("</h2><a href='?'>Czyść historie<a>");
+            out.println("</body></html>");
         }
     }
+
 
 
 
@@ -136,10 +167,13 @@ public class CalcServlet extends HttpServlet {
         out.println("<title> Wynik obliczeń</title> ");
         out.println("</head>");
         out.println("<body>");
+        out.println("<br><a href = 'calc.html'>Kalkulator</a>");
 
         out.println("<h2>"+odpowiedz+"</h2>");
-        out.println("<br><a href = 'calc.html'>Kalkulator</a>");
+
+
         out.println("</body>");
         out.println("</html>");
     }
+
 }
